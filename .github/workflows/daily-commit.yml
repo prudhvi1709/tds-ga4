@@ -1,0 +1,30 @@
+name: Daily Commit Automation
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at 00:00 UTC
+
+  workflow_dispatch:  # Allows manual runs
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Make a Dummy Change
+        run: |
+          date > last-updated.txt
+          echo "Automated commit on $(date)" >> commit-log.txt
+
+      - name: Configure Git (prudhvi.krovvidi@straive.com)
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "prudhvi.krovvidi@straive.com"
+
+      - name: Commit and Push Changes
+        run: |
+          git add .
+          git commit -m "Automated commit: $(date)" || echo "No changes to commit"
+          git push
